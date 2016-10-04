@@ -36,6 +36,15 @@ do_libc_extract() {
                     $conf_file
             fi
 
+            # hack for compiling on Ubuntu 16.04
+            if [ -f aclocal.m4 ]; then
+                local autoconf_ver=`autoconf --version | head -n 1 | cut -d " " -f 4`
+                CT_DoExecLog DEBUG echo "Patching to work with local autoconf version ($autoconf_ver)"
+                CT_DoExecLog DEBUG sed -i \
+                    's/\[GLIBC_AUTOCONF_VERSION\], \[2.68\]/\[GLIBC_AUTOCONF_VERSION\], \['$autoconf_ver'\]/g' \
+                    aclocal.m4
+            fi
+
             CT_DoExecLog DEBUG autoconf
         fi
     fi
